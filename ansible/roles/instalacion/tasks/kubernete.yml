@@ -1,0 +1,31 @@
+---
+
+- name: Instalacion kubernete
+  hosts: all
+  tasks: 
+  - name: Añadir el repositorio
+    become: yes
+    copy:
+      dest: /etc/yum.repos.d/kubernetes.repo
+      content: |
+        [kubernetes]
+        name=Kubernetes
+        baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+        enabled=1
+        gpgcheck=1
+        repo_gpgcheck=1
+        gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+        exclude=kubelet kubeadm kubectl
+ 
+  - name: Install kubernetes packages
+    become: yes
+    yum:
+      name: [kubelet,kubeadm,kubectl]
+      disable_excludes: kubernetes
+      
+
+  - name: Enable kubelet service
+    become: yes
+    service:
+      name: kubelet
+      enabled: yes

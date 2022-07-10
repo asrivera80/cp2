@@ -1,0 +1,9 @@
+- name: prerequisitos cluster k8
+  hosts: all
+  roles:
+    - prerequisitos
+
+- name:  instalar k8
+  hosts: all
+  roles:
+    - instalacionk8

@@ -1,0 +1,27 @@
+---
+#### https://github.com/lmachado25/unir-cp2-lm/blob/master/ansible/groups_vars/k8s.yaml
+
+- name: Repositorio crio
+  hosts: all
+  tasks: 
+    - name: Descargar repositorios cri-o
+      get_url:
+        url: '{{ item.url }}'
+        dest: '{{ item.folder }}'
+      loop: '{{ containers_repos }}'
+
+    - name: Configurar modulos del kernel 
+      ansible.builtin.copy:
+        src: 'cri-o.conf'
+        dest: '/etc/modules-load.d/'
+ 
+    - name: Instalar cri-o
+      dnf:
+        name: 'cri-o'
+        state: present
+
+    - name: Iniciar el servicio
+      ansible.builtin.systemd:
+        name: crio
+        state: started
+        enabled: yes

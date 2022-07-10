@@ -1,0 +1,7 @@
+---
+
+  - name: Activar Firewalld
+    service:
+      name: firewalld
+      state: started
+      enabled: yes

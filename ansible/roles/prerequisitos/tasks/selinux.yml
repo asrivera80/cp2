@@ -1,0 +1,6 @@
+---
+
+- name: deshabilitar selinux
+  become: yes
+  selinux:
+    state: disabled

@@ -5,12 +5,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
     location            = azurerm_resource_group.rg.location
     resource_group_name = azurerm_resource_group.rg.name
     size                = var.vm_size
-    admin_username      = "azureuser"
+    admin_username      = var.ssh_user
     network_interface_ids = [ azurerm_network_interface.NicWorker[count.index].id ]
     
     admin_ssh_key {
-      username   = "azureuser"
-      public_key = file("~/.ssh/id_rsa.pub")
+      username   = var.ssh_user
+      public_key = file(var.public_key_path)
     }
 
     os_disk {
@@ -40,14 +40,14 @@ resource "azurerm_linux_virtual_machine" "master" {
     location            = azurerm_resource_group.rg.location
     resource_group_name = azurerm_resource_group.rg.name
     size                = var.size_master
-    admin_username      = "azureuser"
+    admin_username      = var.ssh_user
     network_interface_ids = [ 
       azurerm_network_interface.NicMaster.id,
     ]
     
     admin_ssh_key {
-      username   = "azureuser"
-      public_key = file("~/.ssh/id_rsa.pub")
+      username   = var.ssh_user
+      public_key = file(var.public_key_path)
     }
 
     os_disk {

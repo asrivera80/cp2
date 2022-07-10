@@ -1,0 +1,6 @@
+---
+- name: update all packages
+  dnf:
+    name: "*"
+    state: latest
+  notify: reboot

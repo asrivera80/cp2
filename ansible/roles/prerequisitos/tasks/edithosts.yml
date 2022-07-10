@@ -1,0 +1,8 @@
+- name: modificar fichero hosts 
+  hosts: all
+  tasks: 
+    - name: incluir nodos
+      lineinfile:
+        path: /etc/hosts
+        insertafter: 
+        line: 
