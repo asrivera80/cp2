@@ -1,0 +1,12 @@
+- name: Instalando Chrony 
+  dnf:
+    name: chrony
+    state: present
+  become: true
+
+- name: Habilitar servicio Chronyd (Red Hat)
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+  become: true

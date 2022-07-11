@@ -10,6 +10,25 @@
   hosts: all
   vars_files:
     - "group_vars/common.yaml"
+    - "group_vars/k8.yml"
   gather_facts: true
   roles:
     - instalacion-k8
+
+- name: Instalacion NFS
+  hosts: NFS
+  gather_facts: true
+  roles:
+    - nfs
+
+- name: configuracion master
+  hosts: master
+  gather_facts: true
+  roles:
+    - master
+
+- name: configuracion worker
+  hosts: worker
+  gather_facts: true
+  roles:
+    - worker

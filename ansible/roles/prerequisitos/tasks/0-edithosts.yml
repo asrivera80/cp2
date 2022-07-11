@@ -1,7 +1,18 @@
----
+- name: Configuramos el hostname
+  hostname:
+    name: "{{inventory_hostname}}.{{kubernets_domain}}"
+    use: systemd
+  become: true
 
-- name: incluir nodos
+- name: Agregar a /etc/hosts
   lineinfile:
-    path: /etc/hosts
-    insertafter: 
-    line: 
+    dest: /etc/hosts
+    line: "{{item}}"
+    state: present
+  become: true
+  with_items: 
+    - '10.0.1.10 kubemaster kubemaster.juanmaorgaz.es'
+    - '10.0.1.11 kubenode1 kubenode1.juanmaorgaz.es'
+    - '10.0.1.13 nfs nfs.juanmaorgaz.es'
+
+

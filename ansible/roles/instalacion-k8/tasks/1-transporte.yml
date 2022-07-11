@@ -32,3 +32,10 @@
 - name: disable swap
   become: true
   shell: swapoff -a
+
+- name: Comentamos la línea de la particion swap del /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+.*)$'
+    replace: '# \1'
+  become: true
