@@ -1,0 +1,7 @@
+---
+
+- name: incluir nodos
+  lineinfile:
+    path: /etc/hosts
+    insertafter: 
+    line: 

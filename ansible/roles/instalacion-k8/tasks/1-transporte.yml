@@ -1,0 +1,34 @@
+---
+
+- name: Activate transparent masquerade
+  become: true
+  modprobe:
+    name: br_netfilter
+    state: present
+
+- name: Añadir al fw
+  firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+
+- name: reiniciar servicio firewalld
+  become: true
+  systemd: 
+   name: firewalld
+   state: reloaded
+    
+- name: k8s firewall traffic
+  copy:
+    dest: /etc/sysctl.d/k8s.conf
+    content:
+      net.bridge.bridge-nf-call-ip6tables = 1
+      net.bridge.bridge-nf-call-iptables = 1
+
+- name: apply changes
+  become: true
+  command: sysctl --system
+
+- name: disable swap
+  become: true
+  shell: swapoff -a

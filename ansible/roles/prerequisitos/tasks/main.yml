@@ -1,58 +1,7 @@
 ---
-- import_tasks: 0-actualizar.yml
-- import_tasks: edithosts.yml
-- import_tasks: timezone.yml
-- import_tasks: selinux.yml
-- import_tasks: firewall.yml
-####
--  name: modificar fichero hosts 
-   hosts: all
-   roles:
-     - etchosts
-
--  name: actualizar paquetes
-   hosts: all
-   roles:
-     - update
-
--  name: instalar cortafuego
-   hosts: all
-   roles: 
-     - cortafuego
-     
-     - role:
-        name: dnf
-      vars:
-        packages:
-          - chrony
-
-    - name: "enable chronyd"
-      become: yes
-      command: systemctl enable chronyd
-
-    - name: "start chronyd"
-      become: yes
-      command: systemctl start chronyd
-
-    - name: "Enable ntp"
-      command: /usr/bin/timedatectl set-ntp true
-
-    - import_role: 
-        name: disable_selinux
-
-    - import_role:
-        name: dnf
-      vars:
-        packages:
-          - nfs-utils
-          - nfs4-acl-tools
-          - wget
-    
-    - name: enable service firewalld
-      become: yes
-      command: "systemctl enable firewalld"
-
-    - name: start service firewalld
-      become: yes
-      command: "systemctl start firewalld"
-    
+- import_tasks: 0-edithosts.yml
+- import_tasks: 1-dominio.yml
+- import_tasks: 2-update.yml
+- import_tasks: 3-timezone.yml
+- import_tasks: 4-firewall.yml
+- import_tasks: 5-selinux.yml

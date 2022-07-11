@@ -1,0 +1,4 @@
+---
+- import_tasks: 1-transporte.yml
+- import_tasks: 2-crio.yml
+- import_tasks: 3-repositorio-k8.yml
