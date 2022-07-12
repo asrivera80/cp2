@@ -29,11 +29,20 @@ variable "contador"{
 	type = number
 }
 
+variable "tags"{
+   description = "Etiqueta de recursos"
+   type        = map(string)
+   default = {
+      environment = "CP2"
+   }
+}
+
+
 #### NUEVAS VARIABLES
 variable "storage_account" {
   type = string
   description = "Nombre para la storage account"
-  default = "almacenamiento"
+  default = "staccountcp2"
 }
 
 variable "public_key_path" {
@@ -41,7 +50,6 @@ variable "public_key_path" {
   description = "Ruta para la clave pública de acceso a las instancias"
   default = "~/.ssh/id_rsa.pub" # o la ruta correspondiente
 }
-
 
 variable "ssh_user" {
   type = string
