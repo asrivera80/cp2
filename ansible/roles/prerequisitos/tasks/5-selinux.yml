@@ -1,0 +1,10 @@
+---
+
+- name: deshabilitar selinux
+  become: true
+  selinux:
+    state: disabled
+
+- name: reiniciamos la maquina
+  ansible.builtin.reboot:
+    reboot_timeout: 300
