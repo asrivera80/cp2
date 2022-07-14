@@ -1,1 +1,3 @@
-  
+    k8s_cni: calico                                      
+    container_runtime: cri-o                             
+    pod_network_cidr: "192.168.0.0/16"
