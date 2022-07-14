@@ -15,12 +15,6 @@
   roles:
     - instalacion-k8
 
-- name: Instalacion NFS
-  hosts: NFS
-  gather_facts: true
-  roles:
-    - nfs
-
 - name: configuracion master
   hosts: master
   gather_facts: true
@@ -32,3 +26,10 @@
   gather_facts: true
   roles:
     - worker
+
+- name: Instalacion NFS
+  hosts: NFS
+  gather_facts: true
+  roles:
+    - nfs
+
