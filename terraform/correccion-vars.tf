@@ -10,7 +10,6 @@ variable "location" {
 variable "vm_size" {
 	type = string
 	description = "tamaño de la máquina virtual"
-	#default = "Standard_DS2_v2" #DS1_v2tamaño para el master tb puede ser Standard_A4_v2
 	default = "Standard_D1_v2" #tamaño worker y nfs tb puede ser Standard_A2_v2
 }
 variable "size_master" {
@@ -23,11 +22,6 @@ variable "vms" {
 	type = list (string)
 	default = ["worker1", "nfs"]  
 }
-variable "contador"{
-	description = "Contador para crear los nodos worker y nfs"
-	default = 2
-	type = number
-}
 
 variable "tags"{
    description = "Etiqueta de recursos"
@@ -37,8 +31,6 @@ variable "tags"{
    }
 }
 
-
-#### NUEVAS VARIABLES
 variable "storage_account" {
   type = string
   description = "Nombre para la storage account"

@@ -36,6 +36,5 @@ resource "azurerm_network_interface_security_group_association" "mySecGroupAssoc
 resource "azurerm_network_interface_security_group_association" "mySecGroupAssociation2" {
   count = length(var.vms)
   network_interface_id      = azurerm_network_interface.NicWorker[count.index].id
-  #count = var.contador
   network_security_group_id = azurerm_network_security_group.mySecGroup.id
 }

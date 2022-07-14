@@ -1,0 +1,20 @@
+# Habilitar el tráfico entrante en el cortafuegos:
+- name: "Abriendo puertos para K8s"
+  firewalld: 
+    permanent: true
+    port: "{{ item }}"
+    state: enabled
+  loop: 
+    - 10250/tcp
+    - 30000-32767/tcp
+  
+- name: recargar firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+    enabled: True
+
+# Añadir el worker al cluster de Kubernetes:
+- name: añadir worker al cluster
+  command: kubeadm join 10.0.1.10:6443 --token {{ token }} --discovery-token-ca-cert-hash {{ discoverytoken }}
+  register: firewallconf

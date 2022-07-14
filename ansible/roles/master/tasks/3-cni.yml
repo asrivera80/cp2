@@ -1,0 +1,10 @@
+
+# instalar plugin cni  
+- name: Instalar el plugin CNI
+  become: yes
+  command: 'kubeadm init --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=all'
+  register: ippod
+
+- name: Mostrando la salida de la ejecución del kubeadm init
+  debug:
+    msg: "{{ ippod.stdout_lines }}"

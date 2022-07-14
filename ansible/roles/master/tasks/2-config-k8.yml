@@ -1,0 +1,7 @@
+
+# configuración de kubeadm
+- name: Configurando Kubeadmin
+  become: true
+  command: kubeadm config images pull
+
+# Exportar configuración de kubeadmin

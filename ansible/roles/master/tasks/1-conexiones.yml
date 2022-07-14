@@ -1,0 +1,39 @@
+# Permitir el tráfico necesario
+- name: puertos para nodo master k8
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - 6443/tcp
+    - 2379-2380/tcp
+    - 10250-10252/tcp
+    - 10255/tcp
+
+# Permitir conexiones desde los worker
+- name: allow access to workers
+  become: true
+  firewalld:
+      rich_rule: "{{item}}"
+      permanent: yes
+      immediate: yes
+      state: enabled
+  loop:
+   - 'rule family=ipv4 source address=10.0.1.11/24 accept'
+   - 'rule family=ipv4 source address=10.0.1.12/24 accept'
+  
+# Permitir conexiones para el SDN
+- name: puertos para el SDN
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - 8285/udp
+    - 8472/udp
+
+- name: reiniciar servicio firewalld
+  become: true
+  systemd: 
+   name: firewalld
+   state: reloaded
