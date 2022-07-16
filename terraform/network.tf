@@ -1,4 +1,7 @@
-# definimos la red, subred y creamos la NIC asociada 
+# definimos la red, subred, ip privada y pública asociada a cada uno de los nodos
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network
+
+# Recurso para crear la red 
 resource "azurerm_virtual_network" "myNet" {
   name                = "kubernetesnet"
   address_space       = ["10.0.0.0/16"]
@@ -8,6 +11,7 @@ resource "azurerm_virtual_network" "myNet" {
   tags = var.tags
 }
 
+# Recurso para crear la subred 
 resource "azurerm_subnet" "mySubnet" {
   name  = "terraformsubnet"
   resource_group_name = azurerm_resource_group.rg-k8.name
@@ -15,6 +19,7 @@ resource "azurerm_subnet" "mySubnet" {
   address_prefixes = ["10.0.1.0/24"]
 }
 
+# Recurso para crear la ip pública del nodo master
 resource "azurerm_public_ip" "pubmaster"{
   name  = "ip_public-master"
   location = azurerm_resource_group.rg-k8.location
@@ -25,6 +30,7 @@ resource "azurerm_public_ip" "pubmaster"{
   tags = var.tags
 }
 
+# Recurso para crear la ip pública del nodo worker y nfs (importante variable vms para el bucle)
 resource "azurerm_public_ip" "pubworker"{
   count = length(var.vms)
   name  = "ip_public-${var.vms[count.index]}"
@@ -36,6 +42,7 @@ resource "azurerm_public_ip" "pubworker"{
   tags = var.tags
 }
 
+# Recurso para crear la ip privada del nodo master
 resource "azurerm_network_interface" "NicMaster" {
   name = "nic-master"
   location            = azurerm_resource_group.rg-k8.location
@@ -52,6 +59,7 @@ resource "azurerm_network_interface" "NicMaster" {
   tags = var.tags
 }
 
+# Recurso para crear la ip privada del nodo worker y nfs (importante variable vms para el bucle)
 resource "azurerm_network_interface" "NicWorker" {
   count = length(var.vms)
   name  = "nic-${var.vms[count.index]}"

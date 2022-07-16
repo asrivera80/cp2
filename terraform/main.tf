@@ -1,4 +1,4 @@
-# crear el grupo de recursos
+# Creamos el grupo de recursos rg-k8
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/resource_group
 resource "azurerm_resource_group" "rg-k8" {
   name = "rg-k8"
@@ -7,6 +7,7 @@ resource "azurerm_resource_group" "rg-k8" {
   tags = var.tags
 }
 
+# Provider de Azure
 terraform {
   required_providers {
     azurerm = {
