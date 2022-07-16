@@ -21,16 +21,6 @@
   loop:
    - 'rule family=ipv4 source address=10.0.1.11/24 accept'
    - 'rule family=ipv4 source address=10.0.1.12/24 accept'
-  
-# Permitir conexiones para el SDN
-- name: puertos para el SDN
-  firewalld:
-    port: "{{ item }}"
-    permanent: true
-    state: enabled
-  loop:
-    - 8285/udp
-    - 8472/udp
 
 - name: reiniciar servicio firewalld
   become: true

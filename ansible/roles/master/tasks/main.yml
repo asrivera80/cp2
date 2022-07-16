@@ -1,0 +1,5 @@
+---
+- import_tasks: 1-conexiones.yml
+- import_tasks: 2-confing-k8.yml
+- import_tasks: 3-sdn.yml
+- import_tasks: 4-ingres.yml

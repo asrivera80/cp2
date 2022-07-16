@@ -4,4 +4,44 @@
   become: true
   command: kubeadm config images pull
 
+# instalar plugin cni  
+- name: Instalar el plugin CNI
+  become: yes
+  command: 'kubeadm init --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=all'
+  register: ippod
+
+- name: Mostrando la salida de la ejecución del kubeadm init
+  debug:
+    msg: "{{ ippod.stdout_lines }}"
+
 # Exportar configuración de kubeadmin
+- name: exportar configuracion kubeadmin
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "KUBECONFIG="
+    line: " KUBECONFIG=/etc/kubernetes/admin.conf"
+
+ # Autorizar el acceso al cluster
+- name: crear directorio /azureuser/.kube
+  file:
+    path: /home/azureuser/.kube
+    mode: 0755
+    state: directory
+    
+- name: Copiando /etc/kubernetes/admin.conf a /home/azureuser/.kube/config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/azureuser/.kube/config
+    remote_src: yes
+    owner: azureuser
+    group: azureuser
+    mode: 0644
+
+- name: comprobar nodos
+  command: kubectl get nodes
+  register: nodoscluser
+
+- name: Mostrando la salida de los nodos del cluster
+  debug:
+    msg: "{{ nodoscluster.stdout_lines }}"   

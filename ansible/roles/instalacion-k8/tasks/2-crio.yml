@@ -1,5 +1,4 @@
 ---
-#### https://github.com/lmachado25/unir-cp2-lm/blob/master/ansible/groups_vars/k8s.yaml
 - name: Descargar repositorios cri-o
   get_url:
    url: '{{ item.url }}'
