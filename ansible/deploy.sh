@@ -4,4 +4,4 @@
 ansible-playbook -i hosts playbook.yml
 
 # Despliegue de la aplicación
-ansible-playbook -i hosts despliegue-aplicacion.yml
+#ansible-playbook -i hosts despliegue-aplicacion.yml

@@ -1,0 +1,38 @@
+- name: actualizar
+  yum:
+    name: "*"
+    state: latest
+- name: timezone
+  timezone:
+    name: Europe/Madrid
+- name: Instalando Chrony
+  yum:
+    name: chrony
+    state: present
+- name: Habilitar servicio Chronyd (Red Hat)
+  systemd:
+    name: chronyd
+    state: started
+    enabled: yes
+- name: instalar firewall
+  yum:
+    name: firewalld
+    state: present
+- name: Activar Firewalld
+  service: name=firewalld state=started enabled=yes
+- name: Disable SELinux
+  selinux:
+    state: disabled
+- name: Configuramos el hostname
+  lineinfile:
+    dest: /etc/hosts
+    line: "{{item}}"
+    state: present
+  with_items: 
+    - "10.0.1.10 master master.{{kubernets_domain}}"
+    - "10.0.1.12 worker1 worker.{{kubernets_domain}}"
+    - "10.0.1.11 nfs nfs.{{kubernets_domain}}"
+
+- name: reinicio 
+  reboot:
+    reboot_timeout: 300

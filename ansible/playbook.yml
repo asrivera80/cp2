@@ -1,35 +1,46 @@
 - name: Preparacion del cluster
   hosts: all
+  become: true
   vars_files:
     - "group_vars/common.yaml"
   gather_facts: true
   roles:
-    - prerequisitos
+    - 1-prerequisitos
 
 - name: Instalacion cluster kubernete
   hosts: all
+  become: true
   vars_files:
     - "group_vars/common.yaml"
     - "group_vars/k8.yml"
   gather_facts: true
   roles:
-    - instalacion-k8
+    - 2-instalacion-k8
 
 - name: configuracion master
   hosts: master
   gather_facts: true
+  become: true
   roles:
-    - master
+    - 3-master
 
 - name: configuracion worker
   hosts: worker
+  become: true
   gather_facts: true
   roles:
-    - worker
+    - 4-worker
 
 - name: Instalacion NFS
-  hosts: NFS
+  hosts: nfs
   gather_facts: true
+  become: true
   roles:
-    - nfs
+    - 5-nfs
 
+- name: Despliegue Nginx con nfs
+  hosts: worker
+  gather_facts: true
+  become: true
+  roles:
+    - 6-aplicacion

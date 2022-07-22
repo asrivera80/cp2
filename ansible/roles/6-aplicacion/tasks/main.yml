@@ -1,0 +1,4 @@
+---
+- import_tasks: 1-pv-nfs.yml
+- import_tasks: 2-nfs-nginx.yml
+- import_tasks: 3-despliegue-nginx.yml

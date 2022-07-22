@@ -1,0 +1,12 @@
+# Fichero para conectar el volumen nfs a nginx
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: nfs-nginx
+spec:
+  storageClassName: storage-nfs
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 2Gi

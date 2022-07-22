@@ -1,0 +1,100 @@
+# Permitir el tráfico necesario
+- name: puertos para nodo master k8
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - 6443/tcp
+    - 2379-2380/tcp
+    - 10250-10252/tcp
+    - 10255/tcp
+# Permitir conexiones desde los worker
+- name: allow access to workers
+  firewalld:
+    rich_rule: "{{item}}"
+    permanent: yes
+    immediate: yes
+    state: enabled
+  loop:
+    - 'rule family=ipv4 source address=10.0.1.11/24 accept'
+    - 'rule family=ipv4 source address=10.0.1.12/24 accept'
+- name: reiniciar servicio firewalld
+  systemd: 
+    name: firewalld
+    state: reloaded
+# configuración de kubeadm
+- name: Configurando Kubeadmin
+  become: true
+  command: kubeadm config images pull
+# instalar plugin cni  
+- name: Instalar el plugin CNI
+  command: 'kubeadm init --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=all'
+  register: token_k8_nodes
+  ignore_errors: true
+#- name: guardar token_k8_nodes
+#  local_action: 
+#    copy content={{ token_k8_nodes }}
+#    dest=file/k8s_nodes.txt
+#  when: token is succeeded
+- name: Generate join token
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_cmd
+  #delegate_to: "{{ groups['k8s-masters'][0] }}"
+- set_fact:
+  kubeadm_join: "{{ kubeadm_join_cmd.stdout }}"
+- debug: var=kubeadm_join
+- name: Store join command
+  action: copy content="{{ kubeadm_join }}" dest="/etc/kubernetes/kubeadm-join.command"
+- name: Run kubeadm join
+  shell: "{{ kubeadm_join }} --ignore-preflight-errors=swap"
+# Exportar configuración de kubeadmin
+- name: exportar configuracion kubeadmin
+  lineinfile:
+    dest: "/etc/environment"
+    state: present
+    regexp: "KUBECONFIG="
+    line: " KUBECONFIG=/etc/kubernetes/admin.conf"
+ # Autorizar el acceso al cluster
+- name: crear directorio /azureuser/.kube
+  file:
+    path: /home/azureuser/.kube
+    mode: 0755
+    state: directory
+- name: Copiando /etc/kubernetes/admin.conf a /home/azureuser/.kube/config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/azureuser/.kube/config
+    remote_src: yes
+    owner: azureuser
+    group: azureuser
+    mode: 0644
+- name: comprobar nodos
+  command: kubectl get nodes
+  register: nodoscluster
+- name: Mostrando la salida de los nodos del cluster
+  debug:
+    msg: "{{ nodoscluster.stdout_lines }}"   
+# Install Calico
+- name: Install Calido
+  command: kubectl --kubeconfig=/home/azureuser/.kube/config apply -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
+#Add ingress
+- name: Add ingress
+  command: kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
+- name: puertos para el SDN
+  firewalld:
+    port: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - 8285/udp
+    - 8472/udp
+- name: reiniciar servicio firewalld
+  systemd: 
+    name: firewalld
+   state: reloaded
+- name: install azure sdn
+  shell: kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
+#- name: reinicio
+#  reinicio:
+#    reboot_timeout: 300

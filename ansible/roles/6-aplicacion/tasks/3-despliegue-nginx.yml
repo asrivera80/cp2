@@ -1,0 +1,27 @@
+#Despligue de ngixn por el puerto 80 con 2 réplicas haciendo uso del volumen NFS en la ruta /usr/share/nginx/html
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-nfs-deployment
+spec:
+  selector:
+    matchLabels:
+      app: nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: nfs-storage
+          mountPath: "/usr/share/nginx/html"
+      volumes:
+        - name: nfs-storage
+          persistentVolumeClaim:
+            claimName: nfs-nginx

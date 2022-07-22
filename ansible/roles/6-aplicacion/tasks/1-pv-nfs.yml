@@ -1,0 +1,14 @@
+# Preparación del volumen persistente para posteriormente conectarlo con nginx
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: nfs-storage
+spec:
+  storageClassName: storage-nfs
+  capacity:
+    storage: 2Gi
+  accessModes:
+  - ReadWriteMany
+  nfs:
+    server: nfs.cloudk8.com
+    path: "/mnt/nfs"

@@ -1,0 +1,68 @@
+- name: Activate transparent masquerade
+  modprobe:
+    name: br_netfilter
+    state: present
+- name: Añadir al fw
+  firewalld:
+    masquerade: yes
+    state: enabled
+    permanent: yes
+- name: Activar Firewalld
+  service: name=firewalld state=started enabled=yes
+- name: Añadir el repositorio
+  copy:
+    dest: /etc/yum.repos.d/kubernetes.repo
+    content: |
+      [kubernetes]
+      name=Kubernetes
+      baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+      enabled=1
+      gpgcheck=1
+      repo_gpgcheck=1
+      gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+- name: intalacion de kubeadm, kubectl y kubelet
+  yum:
+    name:
+      - kubeadm
+      - kubectl
+      - kubelet
+    state: present
+- name: habilitar e iniciar kubelet
+  service:
+    name: kubelet
+    enabled: yes
+- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+- name: Comentamos la línea de la particion swap del /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+.*)$'
+    replace: '# \1'
+# CRI-O
+- name: Descargar repositorios cri-o
+  get_url:
+    url: '{{ item.url }}'
+    dest: '{{ item.folder }}'
+  loop: '{{ repositorio_crio }}'
+- name: Configurar modulos del kernel 
+  ansible.builtin.copy:
+   src: 'roles/instalacion-k8/files/cri-o.conf'
+   dest: '/etc/modules-load.d/'
+   mode: u=rw,g=r,o=r
+- name: Instalar cri-o
+  yum:
+    name: 'cri-o'
+    state: present
+- name: activar servicio crio
+  systemd:
+    name: crio
+    state: started
+    enabled: true
