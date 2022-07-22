@@ -2,7 +2,7 @@
   hosts: all
   become: true
   vars_files:
-    - "group_vars/common.yaml"
+    - "group_vars/comunes.yml"
   gather_facts: true
   roles:
     - 1-prerequisitos
@@ -11,7 +11,7 @@
   hosts: all
   become: true
   vars_files:
-    - "group_vars/common.yaml"
+    - "group_vars/comunes.yml"
     - "group_vars/k8.yml"
   gather_facts: true
   roles:
