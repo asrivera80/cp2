@@ -9,6 +9,11 @@
 - name: Activar Firewalld
   service: name=firewalld state=restarted enabled=yes
 # Añadir el worker al cluster de Kubernetes:
-- name: añadir worker al cluster
-  command: kubeadm join 10.0.1.10:6443 --token {{ token }} --discovery-token-ca-cert-hash {{ discoverytoken }}
-  register: firewallconf
+- name: Unimos el Worker al clúster Kubernetes
+  shell: "kubeadm join 10.0.1.10:6443 --token {{ token_hash }} --discovery-token-ca-cert-hash sha256:{{ cert_hash }}"
+  register: kubeadm_join
+  become: yes
+  
+- name: Resultado de la unión del Worker al clúster
+  debug:
+    msg: "{{ kubeadm_join.stdout_lines }}"

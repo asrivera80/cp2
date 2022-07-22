@@ -54,7 +54,7 @@
   loop: '{{ repositorio_crio }}'
 - name: Configurar modulos del kernel 
   ansible.builtin.copy:
-   src: 'roles/instalacion-k8/files/cri-o.conf'
+   src: 'files/cri-o.conf'
    dest: '/etc/modules-load.d/'
    mode: u=rw,g=r,o=r
 - name: Instalar cri-o

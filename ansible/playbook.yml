@@ -27,6 +27,8 @@
 - name: configuracion worker
   hosts: worker
   become: true
+  vars_files:
+    - "group_vars/worker.yml"
   gather_facts: true
   roles:
     - 4-worker
