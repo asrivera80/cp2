@@ -27,7 +27,7 @@
 - name: Configurando Kubeadmin
   become: true
   command: kubeadm config images pull
-# instalar plugin cni  
+# instalar plugin CNI de kubernetes y definir la red de los PODs
 - name: Instalar el plugin CNI
   command: 'kubeadm init --pod-network-cidr 192.168.0.0/16 --ignore-preflight-errors=all'
   register: token_k8_nodes
@@ -92,7 +92,7 @@
 - name: reiniciar servicio firewalld
   systemd: 
     name: firewalld
-   state: reloaded
+    state: reloaded
 - name: install azure sdn
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
 #- name: reinicio
