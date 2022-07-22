@@ -1,55 +1,44 @@
----
-# Primer ejemplo de Playbook en Ansible
-- hosts: all
-  become: true
-  tasks:
-    - name: Instalamos los paquetes de NFS y arrancamos el servicio
-      yum:
-        name: "{{ item }}"
-        state: latest
-      loop:
-        - nfs-utils
-        - net-tools
-    - name: Crear el directorio nfs
-      file:
-        path: /mnt/nfs
-        state: directory
-        owner: root
-        group: root
-        mode: 0644
-    - name: crear/modificar fichero /etc/exports
-      lineinfile:
-        path: /etc/exports
-        line: '/mnt/nfs        3.95.186.73(rw,sync)'
-        #
-    # habilitamos el servicio nfs
-    - name: Habilitar NFS
-      service:
-        name: nfs-server
-        state: started
-        enabled: yes
-
-    #exportacion del directorio creado y comprobación
-    - name: Exportar nfs
-      become: yes
-      command: exportfs -r
-
-    - name: exportfs -s
-      command: exportfs -s
-
-    # añadirmos el servicio al fw y lo reiniciamos
-    - name: Añadir servicio al firewalld
-      firewalld:
-        service: "{{ item }}"
-        permanent: yes
-        state: enabled
-      loop:
-        - nfs
-        - rpc-bind
-        - mountd
-
-    - name: Reinicio del servicio fw
-      systemd:
-        name: firewalld
-        state: reloaded
-
+- name: Instalamos los paquetes de NFS y arrancamos el servicio
+  yum:
+    name: "{{ item }}"
+    state: latest
+  loop:
+    - nfs-utils
+    - net-tools
+- name: Crear el directorio nfs
+  file:
+    path: /mnt/nfs
+    state: directory
+    owner: root
+    group: root
+    mode: 0644
+- name: crear/modificar fichero /etc/exports
+  lineinfile:
+    path: /etc/exports
+    line: '/mnt/nfs        3.95.186.73(rw,sync)'
+# habilitamos el servicio nfs
+- name: Habilitar NFS
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes
+#exportacion del directorio creado y comprobación
+- name: Exportar nfs
+  become: yes
+  command: exportfs -r
+- name: exportfs -s
+  command: exportfs -s
+# añadirmos el servicio al fw y lo reiniciamos
+- name: Añadir servicio al firewalld
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  loop:
+    - nfs
+    - rpc-bind
+    - mountd
+- name: Reinicio del servicio fw
+  systemd:
+    name: firewalld
+    state: reloaded
