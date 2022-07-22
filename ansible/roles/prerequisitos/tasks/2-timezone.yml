@@ -1,6 +1,0 @@
----
-
-- name: "Timezone Europe/Madrid"
-  become: yes
-  timezone:
-    name: Europe/Madrid

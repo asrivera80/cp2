@@ -1,7 +1,0 @@
----
-- import_tasks: 0-edithosts.yml
-- import_tasks: 1-update.yml
-- import_tasks: 2-timezone.yml
-- import_tasks: 3-chrony.yml
-- import_tasks: 4-firewall.yml
-- import_tasks: 5-selinux.yml
