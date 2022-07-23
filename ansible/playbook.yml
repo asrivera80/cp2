@@ -38,15 +38,8 @@
   gather_facts: true
   become: true
   roles:
-    - 5-nfs
-
-- name: Instalacion NFS solo servidor
-  hosts: nfs
-  gather_facts: true
-  become: true
-  roles:
     - 5-nfs-server
-
+    
 - name: Despliegue Nginx con nfs
   hosts: master
   gather_facts: true
