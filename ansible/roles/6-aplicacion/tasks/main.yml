@@ -2,44 +2,21 @@
 - name: Crear namespace nginx
   command:  kubectl create namespace nginx
 
-- name: Copiar 1-pv-nfs 
+- name: Copiando los archivos necesarios para la aplicación
   copy:
-    src: 1-pv-nfs.yml
-    dest: ./
-    mode: u=rw,g=r,o=r
-- name: Aplicamos 1-pv-nfs.yml
-  command: kubectl apply -f 1-pv-nfs.yml
-
-- name: copiar 2-nfs-nginx.yml
-  copy:
-    src: 2-nfs-nginx.yml
-    dest: ./
-    mode: u=rw,g=r,o=r
-- name: aplicamos 2-nfs-nginx.yml
-  command: kubectl apply -f 2-nfs-nginx.yml
-
-- name: copiar deployment
-  copy:
-    src: nginx-deployment.yaml
-    dest: ./
-    mode: u=rw,g=r,o=r
-
-- name: Create deployment
-  command: kubectl create -f nginx-deployment.yaml --namespace nginx
-
-- name: public app
-  command: kubectl port-forward service/nginx 80:80 --namespace nginx
-# Comprobaciones del despliegue
-- name: Ejecutando kubectl cluster info
-  shell: "kubectl cluster-info"
-  register: kubectl_info
+    src: "{{ item }}"
+    dest: "/home/azureuser/{{ item }}"
+    mode: '0644'
+  with_items:
+    - "{{ files }}"
   
-- name: Mostrando información del Cluster recién desplegado
-  debug:
-    msg: |
-      "--> SE CULMINÓ EL DESPLIEGUE DEL CLÚSTER DE KUBERNETES"
-      "{{ kubectl_info.stdout_lines }}"
+  ## Desplegando los volumenes y nginx ##
+- name: Desplegando nginx y sus pv/pvc
+  command: "kubectl apply -f {{ item }}"
+  with_items:
+    - "{{ files }}"
 
+# Comprobamos que el despliegue ha sido correcto
 - name: Ejecutando kubectl get nodes
   shell: kubectl get nodes
   register: kubectl_out
@@ -64,10 +41,18 @@
   debug:
     msg: "{{ kubectl_name.stdout_lines }}"
   
-- name: Ejecutando kubectl get svc
-  shell: kubectl get svc -A
-  register: kubectl_svc
+- name: Ejecutando kubectl get pv
+  shell: kubectl get pv
+  register: kubectl_pv
   
-- name: Mostramos el resultado de kubectl get svc
+- name: Mostramos el resultado de kubectl get pv
   debug:
-    msg: "{{ kubectl_svc.stdout_lines }}"
+    msg: "{{ kubectl_pv.stdout_lines }}"
+
+- name: Ejecutando kubectl get pvc
+  shell: kubectl get pvc
+  register: kubectl_pvc
+  
+- name: Mostramos el resultado de kubectl get pvc
+  debug:
+    msg: "{{ kubectl_pvc.stdout_lines }}"
