@@ -1,0 +1,2 @@
+---
+files: ['1-pv.nfs.yml', '2-nfs.nginx.yml', 'nginx-deployment.yaml']
