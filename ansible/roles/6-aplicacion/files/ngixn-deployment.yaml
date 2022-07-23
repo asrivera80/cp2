@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nginx-nfs-deployment
+  name: nginx
 spec:
   selector:
     matchLabels:
@@ -20,7 +20,7 @@ spec:
         - containerPort: 80
         volumeMounts:
         - name: nfs-storage
-          mountPath: "/usr/share/nginx/html"
+          mountPath: "/mnt/nfs/nginx/html"
       volumes:
         - name: nfs-storage
           persistentVolumeClaim:

@@ -1,4 +1,31 @@
 ---
-- import_tasks: 1-pv-nfs.yml
-- import_tasks: 2-nfs-nginx.yml
-- import_tasks: 3-despliegue-nginx.yml
+- name: Crear namespace nginx
+  command:  kubectl create namespace nginx
+
+- name: Copiar 1-pv-nfs 
+  copy:
+    src: 1-pv-nfs.yml
+    dest: ./
+    mode: u=rw,g=r,o=r
+- name: Aplicamos 1-pv-nfs.yaml
+  command: kubectl apply -f 1-pv-nfs.yaml
+
+- name: copiar 2-nfs-nginx.yml
+  copy:
+    src: 2-nfs-nginx.yml
+    dest: ./
+    mode: u=rw,g=r,o=r
+- name: aplicamos 2-nfs-nginx.yml
+  command: kubectl apply -f 2-nfs-nginx.yml
+
+- name: copiar deployment
+  copy:
+    src: /tmp/nginx-deployment.yaml
+    dest: ./
+    mode: u=rw,g=r,o=r
+
+- name: Create deployment
+  command: kubectl create -f nginx-deployment.yaml --namespace nginx
+
+- name: public app
+  command: kubectl port-forward service/nginx 80:80 --namespace nginx

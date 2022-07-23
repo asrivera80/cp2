@@ -41,7 +41,7 @@
     - 5-nfs
 
 - name: Despliegue Nginx con nfs
-  hosts: worker
+  hosts: master
   gather_facts: true
   become: true
   roles:

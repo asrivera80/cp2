@@ -1,4 +1,5 @@
 - name: Instalamos los paquetes de NFS y arrancamos el servicio
+  hosts: all
   yum:
     name: "{{ item }}"
     state: latest
@@ -12,10 +13,18 @@
     owner: root
     group: root
     mode: 0644
-- name: crear/modificar fichero /etc/exports
+#- name: crear/modificar fichero /etc/exports
+#  lineinfile:
+ #   path: /etc/exports
+  #  line: '/mnt/nfs        3.95.186.73(rw,sync)'
+- name: fichero exportfs
   lineinfile:
-    path: /etc/exports
-    line: '/mnt/nfs        3.95.186.73(rw,sync)'
+    dest: /etc/exports
+    line: "/mnt/nfs/ {{ hostvars[item].ansible_host }}(rw,sync)"
+    state: present
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.k8 }}"
+
 # habilitamos el servicio nfs
 - name: Habilitar NFS
   service:
