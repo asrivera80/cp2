@@ -32,27 +32,36 @@
   command: 'kubeadm init --pod-network-cidr 192.168.0.0/16'
   register: token_k8_nodes
   ignore_errors: true
+
+# obtenemos y mostramos la información en pantalla del token, este nos servirá para posteriormente poder unir los nodos worker
 - name: Mostrando la salida de la ejecución del kubeadm init
   debug:
     msg: "{{ token_k8_nodes.stdout_lines }}"
+
 - name: Extrayendo el hash CRT CA del Master
   shell: openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | sha256sum
   register: cert_out
+
 - name: Limpiando el Hash CRT
   set_fact: 
     cert_hash: "{{ cert_out.stdout | regex_search('^[a-f0-9]{64}') }}"
+
 - name: Mostramos el Hash CRT extraido
   debug:
     msg: "{{ cert_hash }}"
+
 - name: Extrayendo el token del Master en formato JSON
   shell: kubeadm token list -o json
-  register: token_out
-- name: Limpiando el Token
+  register: salida_token
+
+- name: limpiar Token
   set_fact: 
-    token_hash: "{{ token_out.stdout | from_json | json_query('token') }}"
+    token_hash: "{{ salida_token.stdout | from_json | json_query('token') }}"
+
 - name: Mostramos el Token extraido
   debug:
     msg: "{{ token_hash }}"
+
 # Exportar configuración de kubeadmin
 - name: exportar configuracion kubeadmin
   lineinfile:
@@ -80,11 +89,11 @@
 - name: Mostrando la salida de los nodos del cluster
   debug:
     msg: "{{ nodoscluster.stdout_lines }}"   
-# Install Calico
-- name: Install Calido
+# Installación de Calico
+- name: instala calico
   command: kubectl --kubeconfig=/home/azureuser/.kube/config apply -f https://docs.projectcalico.org/manifests/tigera-operator.yaml
-#Add ingress
-- name: Add ingress
+#Añadirmos el ingress
+- name: add ingress
   command: kubectl apply -f https://raw.githubusercontent.com/haproxytech/kubernetes-ingress/master/deploy/haproxy-ingress.yaml
 - name: puertos para el SDN
   firewalld:
@@ -100,6 +109,5 @@
     state: reloaded
 - name: install azure sdn
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
-#- name: reinicio
-#  reinicio:
-#    reboot_timeout: 300
+- name: reinicio del master
+  reinicio:

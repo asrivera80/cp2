@@ -1,5 +1,5 @@
 # Obtenemos el hash y token mostrado luego de ejecutar kubeadm init --pod-network-cidr en el playbook anterior
-# Así podemos usarlos para ejecutar el kubeadm join
+# Así podemos usarlos para ejecutar el kubeadm join en el worker
 
 cert_hash: "{{ hostvars['master'].cert_hash }}"
 token_hash: "{{ hostvars['master'].token_hash }}"

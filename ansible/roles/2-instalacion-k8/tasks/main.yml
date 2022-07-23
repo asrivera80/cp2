@@ -1,3 +1,4 @@
+# Habilitar transparent masquerading
 - name: Activate transparent masquerade
   modprobe:
     name: br_netfilter
@@ -9,6 +10,23 @@
     permanent: yes
 - name: Activar Firewalld
   service: name=firewalld state=started enabled=yes
+
+- name: habilitar transparent masquerade ip6
+  sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+    state: present
+- name: habilitar transparent masquerade ip
+  sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: 1
+    state: present
+- name: Comentamos la línea de la particion swap del /etc/fstab
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+.*)$'
+    replace: '# \1'
+## Añadir repositorio de kubernete e instalar kubeadm, kubectl y kubelet
 - name: Añadir el repositorio
   copy:
     dest: /etc/yum.repos.d/kubernetes.repo
@@ -31,21 +49,6 @@
   service:
     name: kubelet
     enabled: yes
-- name: ensure net.bridge.bridge-nf-call-ip6tables is set to 1
-  sysctl:
-    name: net.bridge.bridge-nf-call-ip6tables
-    value: 1
-    state: present
-- name: ensure net.bridge.bridge-nf-call-iptables is set to 1
-  sysctl:
-    name: net.bridge.bridge-nf-call-iptables
-    value: 1
-    state: present
-- name: Comentamos la línea de la particion swap del /etc/fstab
-  replace:
-    path: /etc/fstab
-    regexp: '^([^#].*?\sswap\s+.*)$'
-    replace: '# \1'
 # CRI-O
 - name: Descargar repositorios cri-o
   get_url:

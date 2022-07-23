@@ -5,20 +5,23 @@
   loop:
     - nfs-utils
     - net-tools
-- name: Crear el directorio nfs
+  
+- name: Crear el directorio nfs en el servidor
   file:
     path: /mnt/nfs
     state: directory
     owner: root
     group: root
     mode: 0644
+  with_items: "{{ groups.nfs}}"
+
 - name: fichero exportfs
   lineinfile:
     dest: /etc/exports
     line: "/mnt/nfs/ {{ hostvars[item].ansible_host }}(rw,sync)"
     state: present
   when: hostvars[item].ansible_host is defined
-  with_items: "{{ groups.k8 }}"
+  with_items: "{{ groups.nfs }}"
 
 # habilitamos el servicio nfs
 - name: Habilitar NFS
@@ -35,7 +38,26 @@
   
 - name: exportfs -s
   command: exportfs -s
-# añadirmos el servicio al fw y lo reiniciamos
+# creamos el punto de montaje en los clientes
+- name: crear punto montaje
+  file:
+    path: /mnt/nfs
+    state: directory
+    owner: azureuser
+    group: azureuser
+    mode: '0775'
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.k8 }}"
+# montamos el volumen
+- name: montar volumen NFS
+  mount:
+    src: 10.0.1.11:/nfs/ssd/shared_data
+    path: /mnt/nfs
+    opts: rw,sync,hard
+    state: mounted
+    fstype: nfs
+
+# añadirmos los servicios al fw y lo reiniciamos
 - name: Añadir servicio al firewalld
   firewalld:
     service: "{{ item }}"

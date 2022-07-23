@@ -1,3 +1,4 @@
+# Role donde se  obtendrán las últimas actualizaciones disponibles en todos los repositorios, se modificará el timezone y se instalará y activará chronyd
 - name: actualizar
   yum:
     name: "*"
@@ -23,6 +24,7 @@
 - name: Disable SELinux
   selinux:
     state: disabled
+# Definición fichero etc/hosts 
 - name: Configuramos el hostname
   lineinfile:
     dest: /etc/hosts
