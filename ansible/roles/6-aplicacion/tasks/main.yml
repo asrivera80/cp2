@@ -1,4 +1,6 @@
 ---
+- name: eliminar namaspace si existe
+  command: kubectl delete namespace nginx
 - name: Crear namespace nginx
   command:  kubectl create namespace nginx
 
@@ -20,7 +22,7 @@
 
 - name: copiar deployment
   copy:
-    src: /tmp/nginx-deployment.yaml
+    src: nginx-deployment.yaml
     dest: ./
     mode: u=rw,g=r,o=r
 
