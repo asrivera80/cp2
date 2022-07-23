@@ -1,6 +1,4 @@
 ---
-- name: eliminar namaspace si existe
-  command: kubectl delete namespace nginx
 - name: Crear namespace nginx
   command:  kubectl create namespace nginx
 
@@ -9,8 +7,8 @@
     src: 1-pv-nfs.yml
     dest: ./
     mode: u=rw,g=r,o=r
-- name: Aplicamos 1-pv-nfs.yaml
-  command: kubectl apply -f 1-pv-nfs.yaml
+- name: Aplicamos 1-pv-nfs.yml
+  command: kubectl apply -f 1-pv-nfs.yml
 
 - name: copiar 2-nfs-nginx.yml
   copy:
@@ -31,3 +29,45 @@
 
 - name: public app
   command: kubectl port-forward service/nginx 80:80 --namespace nginx
+# Comprobaciones del despliegue
+- name: Ejecutando kubectl cluster info
+  shell: "kubectl cluster-info"
+  register: kubectl_info
+  
+- name: Mostrando información del Cluster recién desplegado
+  debug:
+    msg: |
+      "--> SE CULMINÓ EL DESPLIEGUE DEL CLÚSTER DE KUBERNETES"
+      "{{ kubectl_info.stdout_lines }}"
+
+- name: Ejecutando kubectl get nodes
+  shell: kubectl get nodes
+  register: kubectl_out
+  
+- name: Mostramos el resultado de kubectl get nodes
+  debug:
+    msg: "{{ kubectl_out.stdout_lines }}"
+
+- name: Ejecutando kubectl get pods A
+  shell: kubectl get pods -A -o wide
+  register: kubectl_pods
+  
+- name: Mostramos el resultado de kubectl get pods A
+  debug:
+    msg: "{{ kubectl_pods.stdout_lines }}"
+  
+- name: Ejecutando kubectl get namespaces
+  shell: kubectl get namespaces
+  register: kubectl_name
+  
+- name: Mostramos el resultado de kubectl get namespaces
+  debug:
+    msg: "{{ kubectl_name.stdout_lines }}"
+  
+- name: Ejecutando kubectl get svc
+  shell: kubectl get svc -A
+  register: kubectl_svc
+  
+- name: Mostramos el resultado de kubectl get svc
+  debug:
+    msg: "{{ kubectl_svc.stdout_lines }}"
