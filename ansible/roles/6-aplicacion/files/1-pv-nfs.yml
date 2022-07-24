@@ -10,5 +10,5 @@ spec:
   accessModes:
   - ReadWriteMany
   nfs:
-    server: 10.0.1.11
+    server: 10.0.1.12:
     path: "/mnt/nfs"

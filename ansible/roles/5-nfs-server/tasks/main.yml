@@ -89,11 +89,13 @@
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.k8 }}"
 
-#- name: montar volumen NFS
-#  mount:
-#    src: 10.0.1.12:/nfs/ssd/shared_data
-#    path: /mnt/nfs
-#    opts: rw,sync,hard
-#    state: mounted
-#    fstype: nfs
+- name: montar volumen NFS
+  mount:
+    src: 10.0.1.12:/mnt/nfs
+    path: /mnt/nfs
+    opts: rw,sync,hard
+    state: mounted
+    fstype: nfs
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.k8 }}"
 

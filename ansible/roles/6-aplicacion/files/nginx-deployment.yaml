@@ -20,7 +20,7 @@ spec:
         - containerPort: 80
         volumeMounts:
         - name: storage-nfs
-          mountPath: "/mnt/nfs/nginx/html"
+          mountPath: "/mnt/nfs"
       volumes:
         - name: storage-nfs
           persistentVolumeClaim:
