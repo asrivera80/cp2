@@ -35,7 +35,6 @@
 
 #exportacion del directorio creado y comprobación
 - name: Exportar nfs
-  become: yes
   command: exportfs -r
 
 # añadirmos los servicios al fw y lo reiniciamos

@@ -109,5 +109,4 @@
     state: reloaded
 - name: install azure sdn
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
-- name: reinicio del master
-  reinicio:
+

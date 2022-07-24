@@ -4,4 +4,4 @@
 # nfs-nginx conecta el volumen nfs a nginx
 # nginx-deployment despliega ngixn por el puerto 80 con 2 réplicas haciendo uso del volumen NFS en la ruta /usr/share/nginx/html
 
-files: ['1-pv-nfs.yml', '2-nfs-nginx.yml', 'nginx-deployment.yaml']
+files: ['1-pv-nfs.yml', '2-nfs-nginx.yml', 'nginx-deployment.yaml', 'nginx-service.yml']

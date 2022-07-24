@@ -32,8 +32,8 @@
     state: present
   with_items: 
     - "10.0.1.10 master master.{{kubernets_domain}}"
-    - "10.0.1.12 worker1 worker.{{kubernets_domain}}"
-    - "10.0.1.11 nfs nfs.{{kubernets_domain}}"
+    - "10.0.1.12 nfs nfs.{{kubernets_domain}}"
+    - "10.0.1.11 worker worker.{{kubernets_domain}}"
 
 - name: reinicio 
   reboot:
