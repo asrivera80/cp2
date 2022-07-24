@@ -10,5 +10,5 @@ spec:
   accessModes:
   - ReadWriteMany
   nfs:
-    server: nfs.cloudk8.com
+    server: 10.0.1.11
     path: "/mnt/nfs"

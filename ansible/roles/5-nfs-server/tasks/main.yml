@@ -5,24 +5,6 @@
   loop:
     - nfs-utils
     - net-tools
-  
-- name: Crear el directorio nfs en el servidor
-  file:
-    path: /mnt/nfs
-    state: directory
-    owner: root
-    group: root
-    mode: 0644
-  with_items: "{{ groups.nfs}}"
-
-- name: fichero exportfs
-  lineinfile:
-    dest: /etc/exports
-    line: "/mnt/nfs/ {{ hostvars[item].ansible_host }}(rw,sync)"
-    state: present
-  when: hostvars[item].ansible_host is defined
-  with_items: "{{ groups.nfs }}"
-
 # habilitamos el servicio nfs
 - name: Habilitar NFS
   service:
@@ -31,31 +13,35 @@
     enabled: yes
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.nfs }}"
-#exportacion del directorio creado y comprobación
-- name: Exportar nfs
-  become: yes
-  command: exportfs -r
-  
-- name: exportfs -s
-  command: exportfs -s
-# creamos el punto de montaje en los clientes
-- name: crear punto montaje
+
+# creamos y exportamos el recurso NFS
+- name: Crear el directorio nfs en el servidor
   file:
     path: /mnt/nfs
     state: directory
     owner: azureuser
     group: azureuser
-    mode: '0775'
+    mode: 0644
+  with_items: "{{ groups.nfs}}"
+
+# Declaración del recurso que vamos a exportar
+- name: fichero exportfs
+  lineinfile:
+    dest: /etc/exports
+    line: "/mnt/nfs/ 10.0.1.0/16 (rw,sync,all_squash)"
+    state: present
   when: hostvars[item].ansible_host is defined
-  with_items: "{{ groups.k8 }}"
-# montamos el volumen
-- name: montar volumen NFS
-  mount:
-    src: 10.0.1.11:/nfs/ssd/shared_data
-    path: /mnt/nfs
-    opts: rw,sync,hard
-    state: mounted
-    fstype: nfs
+  with_items: "{{ groups.nfs }}"
+
+#exportacion del directorio creado y comprobación
+- name: Exportar nfs
+  become: yes
+  command: exportfs -r
+  register: export_nfs
+
+- name: Mostramos el punto de montaje
+  debug:
+    msg: "{{ export_nfs }}"
 
 # añadirmos los servicios al fw y lo reiniciamos
 - name: Añadir servicio al firewalld
@@ -71,3 +57,43 @@
   systemd:
     name: firewalld
     state: reloaded
+
+# Instalación y configuración de los clientes
+
+#comprobamos que podemos acceder al recuros
+- name: comprobacion en clientes
+  command: showmount -e 10.0.1.12
+  register: salida_show
+
+- name: salida showmount
+  debug:
+    msg: "{{ salida_show }}"
+
+# creamos el punto de montaje en los clientes
+- name: crear punto montaje
+  file:
+    path: /mnt/nfs
+    state: directory
+    owner: azureuser
+    group: azureuser
+    mode: '0775'
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.k8 }}"
+# incluimos en el fstab
+- name: fichero fstab
+  lineinfile:
+    dest: /etc/fstab
+    line: "10.0.1.12:/mnt/nfs nfs defaults 0 0"
+    state: mounted
+    fstype: nfs
+  when: hostvars[item].ansible_host is defined
+  with_items: "{{ groups.k8 }}"
+
+#- name: montar volumen NFS
+#  mount:
+#    src: 10.0.1.12:/nfs/ssd/shared_data
+#    path: /mnt/nfs
+#    opts: rw,sync,hard
+#    state: mounted
+#    fstype: nfs
+
