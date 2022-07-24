@@ -37,11 +37,6 @@
 - name: Exportar nfs
   become: yes
   command: exportfs -r
-  register: export_nfs
-
-- name: Mostramos el punto de montaje
-  debug:
-    msg: "{{ export_nfs }}"
 
 # añadirmos los servicios al fw y lo reiniciamos
 - name: Añadir servicio al firewalld
@@ -59,16 +54,6 @@
     state: reloaded
 
 # Instalación y configuración de los clientes
-
-#comprobamos que podemos acceder al recuros
-- name: comprobacion en clientes
-  command: showmount -e 10.0.1.12
-  register: salida_show
-
-- name: salida showmount
-  debug:
-    msg: "{{ salida_show }}"
-
 # creamos el punto de montaje en los clientes
 - name: crear punto montaje
   file:
@@ -79,16 +64,7 @@
     mode: '0775'
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.k8 }}"
-# incluimos en el fstab
-- name: fichero fstab
-  lineinfile:
-    dest: /etc/fstab
-    line: "10.0.1.12:/mnt/nfs nfs defaults 0 0"
-    state: mounted
-    fstype: nfs
-  when: hostvars[item].ansible_host is defined
-  with_items: "{{ groups.k8 }}"
-
+# montamos el volumen en los clientes
 - name: montar volumen NFS
   mount:
     src: 10.0.1.12:/mnt/nfs
