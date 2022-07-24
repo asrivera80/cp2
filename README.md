@@ -13,5 +13,6 @@ Es necesario tener un entorno local con el siguiente software:
  - Terraform
  - azure cli 
  - ansible
+ - python3
 
-Además para poder acceder al entorno generado en Azure debemos crear una clave pública de acceso.
+Además para poder acceder al entorno generado en Azure debemos crear una clave pública de acceso ya que la forma de trabajar de Ansible es a través de conexiones ssh a los servidores remotos.
