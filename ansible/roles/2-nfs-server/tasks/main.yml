@@ -29,10 +29,16 @@
 - name: fichero exportfs
   lineinfile:
     dest: /etc/exports
-    line: "/mnt/nfs   10.0.1.0/24   (rw,sync,no_subtree_check)"
+    line: "/mnt/nfs 10.0.1.0/24 (rw,sync,no_subtree_check)"
     state: present
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.nfs }}"
+
+- name: Copiar fichero exports al servidor 
+  ansible.builtin.copy:
+   src: 'files/exports'
+   dest: '/etc/'
+   mode: u=rw,g=r,o=r
 
 #exportacion del directorio creado y comprobación
 - name: Exportar nfs
