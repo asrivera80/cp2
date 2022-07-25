@@ -1,2 +1,4 @@
-# declaramos el dominio
+# Lugar donde se definen las variables necesarias para todos los nodos
+
+#Declaración del dominio
 kubernets_domain: 'cloudk8.com'

@@ -21,21 +21,21 @@
     state: directory
     owner: azureuser
     group: azureuser
-    mode: 0644
+    mode: 0777
   with_items: "{{ groups.nfs}}"
 
 # Declaración del recurso que vamos a exportar
 - name: fichero exportfs
   lineinfile:
     dest: /etc/exports
-    line: "/mnt/nfs/ 10.0.1.0/16 (rw,sync,all_squash)"
+    line: "/mnt/nfs   10.0.1.0/24   (rw,sync,no_subtree_check)"
     state: present
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.nfs }}"
 
 #exportacion del directorio creado y comprobación
 - name: Exportar nfs
-  command: exportfs -r
+  command: exportfs -arv
 
 # añadirmos los servicios al fw y lo reiniciamos
 - name: Añadir servicio al firewalld

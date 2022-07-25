@@ -8,6 +8,13 @@
   roles:
     - 1-prerequisitos
 
+- name: Instalacion NFS
+  hosts: all
+  gather_facts: true
+  become: true
+  roles:
+    - 2-nfs-server
+
 - name: Instalacion cluster kubernete
   hosts: all
   become: true
@@ -16,14 +23,14 @@
     - "group_vars/k8.yml"
   gather_facts: true
   roles:
-    - 2-instalacion-k8
+    - 3-instalacion-k8
 
 - name: configuracion master
   hosts: master
   gather_facts: true
   become: true
   roles:
-    - 3-master
+    - 4-master
 
 - name: configuracion worker
   hosts: worker
@@ -32,14 +39,7 @@
     - "group_vars/worker.yml"
   gather_facts: true
   roles:
-    - 4-worker
-
-- name: Instalacion NFS
-  hosts: all
-  gather_facts: true
-  become: true
-  roles:
-    - 5-nfs-server
+    - 5-worker
     
 - name: Despliegue Nginx con nfs
   hosts: master

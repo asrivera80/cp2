@@ -1,4 +1,5 @@
-# ruta url a descargar en las carpetas indicadas
+# variables necesarias para el proceso de instalación de kubernete, tanto cliente como servidor
+# ruta url desde donde descargar el repositorio crio y carpetas donde ubicarlos
 repositorio_crio: 
   - folder: /etc/yum.repos.d/devel:kubic:libcontainers:stable.repo 
     url: https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/CentOS_8_Stream/devel:kubic:libcontainers:stable.repo
