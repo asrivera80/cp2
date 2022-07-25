@@ -1,3 +1,4 @@
+# instalamos los paquetes nfs
 - name: Instalamos los paquetes de NFS
   yum:
     name: "{{ item }}"
@@ -63,17 +64,7 @@
     mode: '0775'
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.k8 }}"
-# montamos el volumen en los clientes
-#- name: montar volumen NFS
-#  mount:
-#    src: 10.0.1.12:/mnt/nfs
-#    path: /mnt/nfs
-#    opts: rw,sync,hard
-#    state: mounted
-#    fstype: nfs
-#  when: hostvars[item].ansible_host is defined
-#  with_items: "{{ groups.k8 }}"
-
+# modificamos el fichero fstab
 - name: fichero fstab
   lineinfile:
     dest: /etc/fstab
@@ -81,7 +72,7 @@
     state: present
   when: hostvars[item].ansible_host is defined
   with_items: "{{ groups.k8 }}"
-
+# montamos el volumen
 - name: montamos el volumen
   command: mount -a
   when: hostvars[item].ansible_host is defined

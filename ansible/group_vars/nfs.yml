@@ -1,4 +1,0 @@
-mynfs: "10.0.1.12:/mnt/nfs"
-mountpoint: "/var/www/html"
-permisos: "0777"
-opciones: "rw, sync,no_subtree_check"
