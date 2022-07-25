@@ -110,3 +110,6 @@
 - name: install azure sdn
   shell: kubectl apply -f https://docs.projectcalico.org/manifests/canal.yaml
 
+- name: reinicio 
+  reboot:
+    reboot_timeout: 300
